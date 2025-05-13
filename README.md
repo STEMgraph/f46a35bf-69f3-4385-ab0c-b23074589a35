@@ -1,51 +1,121 @@
 <!---
 {
-  "depends_on": [],
+  "id": "f46a35bf-69f3-4385-ab0c-b23074589a35",
+  "depends_on": ["7130a694-458e-4e24-80b7-d8673f765e69"],
   "author": "Stephan Bökelmann",
-  "first_used": "2025-03-17",
-  "keywords": ["learning", "exercises", "education", "practice"]
+  "first_used": "2025-05-13",
+  "keywords": ["argparse", "python", "cli", "arguments", "--version", "-h"]
 }
 --->
 
-# Learning Through Exercises
+# Using `argparse` in Python Applications
 
-## Introduction
-Learning by doing is one of the most effective methods to acquire new knowledge and skills. Rather than passively consuming information, actively engaging in problem-solving fosters deeper understanding and long-term retention. By working through structured exercises, students can grasp complex concepts in a more intuitive and applicable way. This approach is particularly beneficial in technical fields like programming, mathematics, and engineering.
+> In this exercise you will learn how to use the `argparse` module to parse command-line arguments in Python. Furthermore we will explore how to structure CLI tools that follow best practices, such as including `--version` and `-h` for help.
+
+### Introduction
+
+Command-line interfaces (CLIs) are essential for many applications, especially in automation and scripting contexts. Python's built-in `argparse` module provides a robust and user-friendly framework to parse command-line arguments. Since `argparse` is part of Python's standard library, it is available by default in any standard Python installation (version 3.2 and above), requiring no additional packages or installations. This makes it an ideal choice for building reliable and portable CLI tools.
+
+Using `argparse`, developers can define what arguments their program expects, handle different types of arguments, generate usage help messages, and control tool metadata such as versioning. One of the key conventions in CLI design is the inclusion of two specific options: `-h` or `--help`, which outputs a helpful summary of how to use the tool, and `--version`, which returns the version of the script or application. These options enhance usability and maintainability of scripts and are considered best practice in any serious CLI development.
+
+This sheet walks you through three different tasks that build on each other. The first demonstrates basic usage, the second shows how to use mutually exclusive arguments, and the third integrates sub-commands for more complex CLIs. Throughout, we emphasize the inclusion of `--version` and `-h`.
 
 ### Further Readings and Other Sources
-- [The Importance of Practice in Learning](https://www.sciencedirect.com/science/article/pii/S036013151300062X)
-- "The Art of Learning" by Josh Waitzkin
-- [How to Learn Effectively: 5 Key Strategies](https://www.edutopia.org/article/5-research-backed-learning-strategies)
 
-## Tasks
-1. **Write a Summary**: Summarize the concept of "learning by doing" in 3-5 sentences.
-2. **Example Identification**: List three examples from your own experience where learning through exercises helped you understand a topic better.
-3. **Create an Exercise**: Design a simple exercise for a topic of your choice that someone else could use to practice.
-4. **Follow an Exercise**: Find an online tutorial that includes exercises and complete at least two of them.
-5. **Modify an Existing Exercise**: Take a basic problem from a textbook or online course and modify it to make it slightly more challenging.
-6. **Pair Learning**: Explain a concept to a partner and guide them through an exercise without giving direct answers.
-7. **Review Mistakes**: Look at an exercise you've previously completed incorrectly. Identify why the mistake happened and how to prevent it in the future.
-8. **Time Challenge**: Set a timer for 10 minutes and try to solve as many simple exercises as possible on a given topic.
-9. **Self-Assessment**: Create a checklist to evaluate your own performance in completing exercises effectively.
-10. **Reflect on Progress**: Write a short paragraph on how this structured approach to exercises has influenced your learning.
+* [Python `argparse` Documentation](https://docs.python.org/3/library/argparse.html)
+* [YouTube: Python `argparse` Crash Course](https://www.youtube.com/watch?v=cdblJqEUDNo)
+* [Real Python on `argparse`](https://realpython.com/command-line-interfaces-python-argparse/)
 
-<details>
-  <summary>Tip for Task 5</summary>
-  Try making small adjustments first, such as increasing the difficulty slightly or adding an extra constraint.
-</details>
+---
 
-## Questions
-1. What are the main benefits of learning through exercises compared to passive learning?
-2. How do exercises improve long-term retention?
-3. Can you think of a subject where learning through exercises might be less effective? Why?
-4. What role does feedback play in learning through exercises?
-5. How can self-designed exercises improve understanding?
-6. Why is it beneficial to review past mistakes in exercises?
-7. How does explaining a concept to someone else reinforce your own understanding?
-8. What strategies can you use to stay motivated when practicing with exercises?
-9. How can timed challenges contribute to learning efficiency?
-10. How do exercises help bridge the gap between theory and practical application?
+## Task 1: Basic Argument Parsing with `--version` and `-h`
+
+Create a script `basic_cli.py` that accepts a required filename and supports the `--version` flag.
+
+```python
+import argparse
+
+parser = argparse.ArgumentParser(description='Basic CLI tool with version info.')
+parser.add_argument('filename', help='File to process')
+parser.add_argument('--version', action='version', version='basic_cli 1.0', help='Show version and exit')
+args = parser.parse_args()
+
+print(f"Processing file: {args.filename}")
+```
+
+Run this script using:
+
+```
+python basic_cli.py example.txt
+python basic_cli.py --version
+```
+
+## Task 2: Mutually Exclusive Arguments
+
+Extend your CLI to use mutually exclusive options: `--compress` and `--decompress`, while retaining `--version` and `-h`. Save this as `exclusive_cli.py`.
+
+```python
+import argparse
+
+parser = argparse.ArgumentParser(description='CLI with mutually exclusive options.')
+parser.add_argument('filename', help='File to process')
+parser.add_argument('--version', action='version', version='exclusive_cli 1.0', help='Show version and exit')
+
+group = parser.add_mutually_exclusive_group(required=True)
+group.add_argument('--compress', action='store_true', help='Compress the file')
+group.add_argument('--decompress', action='store_true', help='Decompress the file')
+
+args = parser.parse_args()
+
+if args.compress:
+    print(f"Compressing file: {args.filename}")
+else:
+    print(f"Decompressing file: {args.filename}")
+```
+
+Run this script with:
+
+```
+python exclusive_cli.py example.txt --compress
+python exclusive_cli.py --version
+```
+
+## Task 3: Subcommands with `argparse`
+
+Implement a more structured CLI with subcommands using `argparse`. Save the file as `subcommands_cli.py`. It should include a `greet` and a `farewell` subcommand.
+
+```python
+import argparse
+
+parser = argparse.ArgumentParser(description='CLI with subcommands')
+parser.add_argument('--version', action='version', version='subcommands_cli 1.0', help='Show version and exit')
+subparsers = parser.add_subparsers(dest='command', required=True)
+
+# Greet subcommand
+greet_parser = subparsers.add_parser('greet', help='Greet someone')
+greet_parser.add_argument('name', help='Name of the person to greet')
+
+# Farewell subcommand
+farewell_parser = subparsers.add_parser('farewell', help='Say goodbye to someone')
+farewell_parser.add_argument('name', help='Name of the person to say goodbye to')
+
+args = parser.parse_args()
+
+if args.command == 'greet':
+    print(f"Hello, {args.name}!")
+elif args.command == 'farewell':
+    print(f"Goodbye, {args.name}!")
+```
+
+Run the script like this:
+
+```
+python subcommands_cli.py greet Alice
+python subcommands_cli.py --version
+```
+
+---
 
 ## Advice
-Practice consistently and seek out diverse exercises that challenge different aspects of a topic. Combine exercises with reflection and feedback to maximize your learning efficiency. Don't hesitate to adapt exercises to fit your own needs and ensure that you're actively engaging with the material, rather than just going through the motions.
 
+As you work through these tasks, make sure to test your scripts thoroughly with different combinations of arguments. Pay close attention to how `argparse` handles help text generation and errors — understanding this will save you a lot of time in larger projects. Including `--version` and `-h` is not just good practice but a requirement for professional tools. Take your time to explore how `argparse` structures its help output, and consider reading its documentation in full. Since `argparse` is a standard module, using it helps ensure compatibility and minimizes external dependencies. This foundation will be invaluable when you move on to more complex CLI interfaces or frameworks like `click` or `typer`, which build on similar principles.
