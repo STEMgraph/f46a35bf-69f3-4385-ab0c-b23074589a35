@@ -1,6 +1,7 @@
 <!---
 {
   "id": "f46a35bf-69f3-4385-ab0c-b23074589a35",
+  "teaches": "Using `argparse` in Python Applications",
   "depends_on": ["7130a694-458e-4e24-80b7-d8673f765e69"],
   "author": "Stephan Bökelmann",
   "first_used": "2025-05-13",
